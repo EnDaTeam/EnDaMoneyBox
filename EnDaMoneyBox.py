@@ -52,7 +52,7 @@ def continues():
             exit()
     else:
         enter()
-        options()
+        start_up()
 
 #Define a function which gets the first option
 def operation():
@@ -123,10 +123,35 @@ def options():
                     bal = bal - float(amount)
                     amountinput = 0
             enter()
-            note = input(space + Fore.WHITE + "[" + Fore.YELLOW + "?" + Fore.WHITE + "] Do you want to add a note? (Leave blank if you don't) >> " + Fore.RESET)
-            if note.lower() in (" ", "") or "n" in note.lower():
-                note = "NULL"
-        if EnDaMoneyBox.add_newtransaction(amount,add_minus,bal,note):
+            while True:
+                banknote = input(space + Fore.WHITE + "[" + Fore.YELLOW + "?" + Fore.WHITE + "] Add the type of banknote (bill) ? (0.1$, 0.5$, 1$, 2$, 5$, etc.) (Without $ or other currency) >> " + Fore.RESET)
+                try:
+                    float(banknote)
+                except:
+                    enter()
+                    print(space + Fore.WHITE + "[" + Fore.RED + "!" + Fore.WHITE + "] >> " + Fore.LIGHTRED_EX + "Please input a valid number as banknote type!" + Fore.RESET)
+                    enter()
+                banknote = float(banknote)
+                if int(amount / banknote) != amount / banknote or (banknote not in [0.01,0.05,0.1,0.25,0.5,1,2,5,10,20,50,100,200,500]):
+                    enter()
+                    print(space + Fore.WHITE + "[" + Fore.RED + "!" + Fore.WHITE + "] >> " + Fore.LIGHTRED_EX + "Please enter the valid amount or banknote type (To escape CTRL + C)!" + Fore.RESET)
+                    enter()
+                else:
+                    if EnDaMoneyBox.get_theAmountBanknotePositive(banknote) is None:
+                        a = 0
+                    else:
+                        a = EnDaMoneyBox.get_theAmountBanknotePositive(banknote)
+                    if EnDaMoneyBox.get_theAmountBanknoteNegative(banknote) is None:
+                        b = 0
+                    else:
+                        b = EnDaMoneyBox.get_theAmountBanknoteNegative(banknote)
+                    if add_minus == '-' and (a - b < amount):
+                        enter()
+                        print(space + Fore.WHITE + "[" + Fore.RED + "!" + Fore.WHITE + "] >> " + Fore.LIGHTRED_EX + "You don't have that much money (To escape CTRL + C)!" + Fore.RESET)
+                        enter()
+                    else:
+                        break
+        if EnDaMoneyBox.add_newtransaction(amount,add_minus,bal,banknote):
             enter()
             print(space + Fore.WHITE + "[" + Fore.GREEN + "!" + Fore.WHITE + "] >> " + Fore.LIGHTGREEN_EX + "Your new transaction was recorded!" + Fore.RESET)
         else:
@@ -139,7 +164,7 @@ def options():
             except KeyboardInterrupt:
                 exit()
         continues()
-        options()
+        start_up()
     elif option == 2:
         results = EnDaMoneyBox.get_transactions()
         for i in results:
@@ -150,7 +175,7 @@ def options():
             else:
                 print(space + transaction_reader(i))
         continues()
-        options()
+        start_up()
     elif option == 3:
         date = EnDaMoneyBox.get_dateofaccount()
         date = date[0]
@@ -159,13 +184,23 @@ def options():
         dates = str(date[0]) + "/" + str(date[1]) + "/" + str(date[2])
         print(space + Fore.WHITE + "[" + Fore.CYAN + "#" + Fore.WHITE + "] >> Account creation date : " + Fore.LIGHTCYAN_EX + str(dates) + Fore.RESET)
         print(space + Fore.WHITE + "[" + Fore.GREEN + "$" + Fore.WHITE + "] >> Balance : " + Fore.LIGHTGREEN_EX + str(balance)  + " $ " + Fore.RESET)
+        for i in [0.01,0.05,0.1,0.25,0.5,1,2,5,10,20,50,100,200,500]:
+            if EnDaMoneyBox.get_theAmountBanknotePositive(i) is None:
+                a = 0
+            else:
+                a = EnDaMoneyBox.get_theAmountBanknotePositive(i)
+            if EnDaMoneyBox.get_theAmountBanknoteNegative(i) is None:
+                b = 0
+            else:
+                b = EnDaMoneyBox.get_theAmountBanknoteNegative(i)
+            print(space + space + Fore.WHITE + "[" + Fore.LIGHTGREEN_EX + "$" + Fore.WHITE + "] >> " + Fore.LIGHTGREEN_EX + str(i) + " type of banknote in amount" + Fore.WHITE + " : " + Fore.LIGHTGREEN_EX + str(int((a - b)/i))  + Fore.WHITE + " | " + Fore.LIGHTGREEN_EX + str(a - b) + "$ " + Fore.RESET)
         print(space + Fore.WHITE + "[" + Fore.LIGHTRED_EX + "^" + Fore.WHITE + "] >> The last transaction : ")
         if final[0] == 0:
             print(space +space + Fore.WHITE + "[" + Fore.RED + "!" + Fore.WHITE + "] >> " + Fore.LIGHTRED_EX + "You don't have any recorded transaction yet!" + Fore.RESET)
         else:
             print(space + space + transaction_reader(final))
         continues()
-        options()
+        start_up()
     elif option == 9:
         while True:
             try:

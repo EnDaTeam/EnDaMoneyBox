@@ -23,7 +23,7 @@ class EnDaMoneyBox():
         try:
             con = sqlite3.connect("Database.db")
             cur = con.cursor()
-            cur.execute("CREATE TABLE transactions(id, amount, operation, day, month, year, hour_min, note, balance);")
+            cur.execute("CREATE TABLE transactions(id, amount, operation, day, month, year, hour_min, banknote, balance);")
             cur.execute(f"""INSERT INTO transactions VALUES(0, 0 ,"+", {datetime.today().strftime("%d")} ,{datetime.today().strftime("%m")}, {datetime.today().strftime("%Y")}  ,"{datetime.now().strftime("%H:%M")}", "NULL", 0);""")
             con.commit()
             return True
@@ -75,19 +75,43 @@ class EnDaMoneyBox():
             return False
     
     #Define a function which adds a new transaction
-    def add_newtransaction(amount: float, operation: str, balance_after: int, note: str = "NULL"):
+    def add_newtransaction(amount: float, operation: str, balance_after: int, banknote: int = 1):
         try:
             con = sqlite3.connect("Database.db")
             cur = con.cursor()
             id = int(EnDaMoneyBox.get_finaltransaction()[0]) + 1
             query = """INSERT INTO transactions VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);"""
             values = (id, amount, operation, datetime.today().strftime("%d"), datetime.today().strftime("%m"),
-                    datetime.today().strftime("%Y"), datetime.now().strftime("%H:%M"), note, balance_after)
+                    datetime.today().strftime("%Y"), datetime.now().strftime("%H:%M"), banknote, balance_after)
             cur.execute(query, values)
             con.commit()
             return True
         except:
             return False
+
+    #Define a function which gets the number of a type of banknote only for positive 
+    def get_theAmountBanknotePositive(type:int=1):
+        try:
+            con = sqlite3.connect("Database.db")
+            cur = con.cursor()
+            cur.execute(f"""SELECT SUM(amount) FROM transactions WHERE banknote = {int(type)} and operation = "+" """)
+            row = cur.fetchall()
+            return row[0][0]
+        except:
+            return False
+        
+    #Define a function which gets the number of a type of banknote only for negative 
+    def get_theAmountBanknoteNegative(type:int=1):
+        try:
+            con = sqlite3.connect("Database.db")
+            cur = con.cursor()
+            cur.execute(f"""SELECT SUM(amount) FROM transactions WHERE banknote = {int(type)} and operation = "-" """)
+            row = cur.fetchall()
+            if row[0][0] == None:
+                return 0
+            return row[0][0]
+        except:
+            return False    
 
 #Define a function which reads the transactions and transform it to a text
 def transaction_reader(lista:list):
@@ -100,10 +124,9 @@ def transaction_reader(lista:list):
         transaction = transaction + Fore.RED + "-"
     transaction = transaction + Fore.WHITE + "] >> " + f"ID : {Fore.CYAN}{lista[0]}{Fore.WHITE} | {Fore.LIGHTYELLOW_EX}{lista[1]}{Fore.WHITE} $ were {action} your account on {Fore.LIGHTMAGENTA_EX}{lista[3]}/{lista[4]}/{lista[5]}{Fore.WHITE} at {Fore.LIGHTMAGENTA_EX}{lista[6]}{Fore.WHITE}"
     if not lista[7] == "NULL":
-        transaction = transaction + f" | Note : {Fore.LIGHTWHITE_EX} {lista[7]}{Fore.WHITE} |"
+        transaction = transaction + f" | Banknote : {Fore.LIGHTWHITE_EX} {lista[7]}{Fore.WHITE}"
     transaction = transaction + f" | Balance after : {Fore.LIGHTGREEN_EX}{lista[8]}{Fore.WHITE}"
     return transaction
-
 
 #Define a function which verifies if the workspace was done
 def verifier():
