@@ -24,7 +24,7 @@ class EnDaMoneyBox():
             con = sqlite3.connect("Database.db")
             cur = con.cursor()
             cur.execute("CREATE TABLE transactions(id, amount, operation, day, month, year, hour_min, banknote, balance);")
-            cur.execute(f"""INSERT INTO transactions VALUES(0, 0 ,"+", {datetime.today().strftime("%d")} ,{datetime.today().strftime("%m")}, {datetime.today().strftime("%Y")}  ,"{datetime.now().strftime("%H:%M")}", "NULL", 0);""")
+            cur.execute(f"""INSERT INTO transactions VALUES(0, 0 ,"+", {datetime.today().strftime("%d")} ,{datetime.today().strftime("%m")}, {datetime.today().strftime("%Y")}  ,"{datetime.now().strftime("%H:%M")}", 0, 0);""")
             con.commit()
             return True
         except:
@@ -75,7 +75,7 @@ class EnDaMoneyBox():
             return False
     
     #Define a function which adds a new transaction
-    def add_newtransaction(amount: float, operation: str, balance_after: int, banknote: int = 1):
+    def add_newtransaction(amount: float, operation: str, balance_after: int, banknote: float = 1):
         try:
             con = sqlite3.connect("Database.db")
             cur = con.cursor()
@@ -90,22 +90,22 @@ class EnDaMoneyBox():
             return False
 
     #Define a function which gets the number of a type of banknote only for positive 
-    def get_theAmountBanknotePositive(type:int=1):
+    def get_theAmountBanknotePositive(type:float=1):
         try:
             con = sqlite3.connect("Database.db")
             cur = con.cursor()
-            cur.execute(f"""SELECT SUM(amount) FROM transactions WHERE banknote = {int(type)} and operation = "+" """)
+            cur.execute(f"""SELECT SUM(amount) FROM transactions WHERE banknote = {type} and operation = "+" """)
             row = cur.fetchall()
             return row[0][0]
         except:
             return False
         
     #Define a function which gets the number of a type of banknote only for negative 
-    def get_theAmountBanknoteNegative(type:int=1):
+    def get_theAmountBanknoteNegative(type:float=1):
         try:
             con = sqlite3.connect("Database.db")
             cur = con.cursor()
-            cur.execute(f"""SELECT SUM(amount) FROM transactions WHERE banknote = {int(type)} and operation = "-" """)
+            cur.execute(f"""SELECT SUM(amount) FROM transactions WHERE banknote = {type} and operation = "-" """)
             row = cur.fetchall()
             if row[0][0] == None:
                 return 0
