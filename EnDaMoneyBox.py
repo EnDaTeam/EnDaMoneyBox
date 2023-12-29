@@ -193,7 +193,8 @@ def options():
                 b = 0
             else:
                 b = EnDaMoneyBox.get_theAmountBanknoteNegative(i)
-            print(space + space + Fore.WHITE + "[" + Fore.LIGHTGREEN_EX + "$" + Fore.WHITE + "] >> " + Fore.LIGHTGREEN_EX + str(i) + " type of banknote in amount" + Fore.WHITE + " : " + Fore.LIGHTGREEN_EX + str(int((a - b)/i))  + Fore.WHITE + " | " + Fore.LIGHTGREEN_EX + str(a - b) + "$ " + Fore.RESET)
+            if int((a - b)/i) != 0:
+                print(space + space + Fore.WHITE + "[" + Fore.LIGHTGREEN_EX + "$" + Fore.WHITE + "] >> " + Fore.LIGHTGREEN_EX + str(i) + " type of banknote in amount" + Fore.WHITE + " : " + Fore.LIGHTGREEN_EX + str(int((a - b)/i))  + Fore.WHITE + " | " + Fore.LIGHTGREEN_EX + str(a - b) + "$ " + Fore.RESET)
         print(space + Fore.WHITE + "[" + Fore.LIGHTRED_EX + "^" + Fore.WHITE + "] >> The last transaction : ")
         if final[0] == 0:
             print(space +space + Fore.WHITE + "[" + Fore.RED + "!" + Fore.WHITE + "] >> " + Fore.LIGHTRED_EX + "You don't have any recorded transaction yet!" + Fore.RESET)
