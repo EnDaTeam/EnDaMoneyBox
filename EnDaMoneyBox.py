@@ -132,7 +132,7 @@ def options():
                     print(space + Fore.WHITE + "[" + Fore.RED + "!" + Fore.WHITE + "] >> " + Fore.LIGHTRED_EX + "Please input a valid number as banknote type!" + Fore.RESET)
                     enter()
                 banknote = float(banknote)
-                if amount % banknote == 0 or (banknote not in [0.01,0.05,0.1,0.25,0.5,1,2,5,10,20,50,100,200,500]):
+                if amount % banknote != 0 or (banknote not in [0.01,0.05,0.1,0.25,0.5,1,2,5,10,20,50,100,200,500]):
                     enter()
                     print(space + Fore.WHITE + "[" + Fore.RED + "!" + Fore.WHITE + "] >> " + Fore.LIGHTRED_EX + "Please enter the valid amount or banknote type (To escape CTRL + C)!" + Fore.RESET)
                     enter()
